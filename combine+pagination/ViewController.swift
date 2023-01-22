@@ -13,25 +13,19 @@ final class ViewController: UIViewController {
     @IBOutlet weak var showsTableView: UITableView!
     @IBOutlet weak var searchTextField: UITextField!
     
-    var allShows: Show?
-    var filteredShows: Show?
-    var currentPage : Int = 1
-    var isLoadingList : Bool = false
-
-    
+    private var allShows: Show?
+    private var filteredShows: Show?
+    private var currentPage : Int = 1
+    private var isLoadingList : Bool = false
     private var cancellable: AnyCancellable?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         fetchShows(currentPage)
         searchTextField.addTarget(self, action: #selector(ViewController.textFieldDidChange(_:)), for: .editingChanged)
-        
     }
     
     private func fetchShows(_ pageNumber: Int) {
-        
-        cancellable?.cancel()
-        cancellable = nil 
         cancellable = ShowService().getShows(pageNumber: String(pageNumber)).map { [weak self] shows in
             self?.isLoadingList = false
             self?.allShows = shows
@@ -70,7 +64,6 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell");
-        
         
         cell.textLabel?.text = filteredShows?[indexPath.row].name
         return cell
